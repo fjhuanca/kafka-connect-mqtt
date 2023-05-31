@@ -31,15 +31,19 @@ public class MQTTSourceTask extends SourceTask implements IMqttMessageListener {
         mqttSourceConverter = new MQTTSourceConverter(config);
         this.sourceRecordDeque = SourceRecordDequeBuilder.of().batchSize(4096).emptyWaitMs(100).maximumCapacityTimeoutMs(60000).maximumCapacity(50000).build();
         try {
-            mqttClient = new MqttClient(config.getString(MQTTSourceConnectorConfig.BROKER), config.getString(MQTTSourceConnectorConfig.CLIENTID), new MemoryPersistence());
+            mqttClient = new MqttClient(config.getString(MQTTSourceConnectorConfig.BROKER), config.getString(MQTTSourceConnectorConfig.CLIENTID)+"_"+config.getString(MQTTSourceConnectorConfig.MQTT_SUBTOPIC), new MemoryPersistence());
 
             log.info("Connecting to MQTT Broker " + config.getString(MQTTSourceConnectorConfig.BROKER));
             connect(mqttClient);
             log.info("Connected to MQTT Broker");
 
             String topicSubscription = this.config.getString(MQTTSourceConnectorConfig.MQTT_TOPIC);
+            String subtopic = this.config.getString(MQTTSourceConnectorConfig.MQTT_SUBTOPIC);
+            if (Integer.parseInt(subtopic) >= 0){
+                topicSubscription = topicSubscription + "/" + subtopic;
+            }
             int qosLevel = this.config.getInt(MQTTSourceConnectorConfig.MQTT_QOS);
-
+            
             log.info("Subscribing to " + topicSubscription + " with QOS " + qosLevel);
             mqttClient.subscribe(topicSubscription, qosLevel, (topic, message) -> {
                 log.debug("Message arrived in connector from topic " + topic);

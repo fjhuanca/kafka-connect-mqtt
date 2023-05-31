@@ -40,6 +40,8 @@ public class MQTTSourceConnectorConfig extends AbstractConfig {
     public static final String KAFKA_TOPIC = "kafka.topic";
     public static final String KAFKA_TOPIC_DOC = "List of kafka topics to publish to";
 
+    public static final String MQTT_SUBTOPIC = "mqtt.subtopic";
+
     public MQTTSourceConnectorConfig(Map<?, ?> originals) {
         super(configDef(), originals);
     }
