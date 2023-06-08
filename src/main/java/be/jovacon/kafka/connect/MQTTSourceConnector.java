@@ -35,13 +35,19 @@ public class MQTTSourceConnector extends SourceConnector {
         List<Map<String, String>> taskConfigs = new ArrayList<>(maxTasks);
         if (maxTasks == 1){
             Map<String, String> taskConfig = new HashMap<>(configProps);
-            taskConfig.put(MQTTSourceConnectorConfig.MQTT_SUBTOPIC, String.valueOf(-1));
+            String topic = this.mqttSourceConnectorConfig.getString(MQTTSourceConnectorConfig.MQTT_TOPIC) + "/#";
+            String client_id = this.mqttSourceConnectorConfig.getString(MQTTSourceConnectorConfig.CLIENTID) + "_-1";
+            taskConfig.put(MQTTSourceConnectorConfig.MQTT_TOPIC, topic);
+            taskConfig.put(MQTTSourceConnectorConfig.CLIENTID, client_id);
             taskConfigs.add(taskConfig);
         }
         else{
             for (int i = 0; i < maxTasks; i++) {
                 Map<String, String> taskConfig = new HashMap<>(configProps);
-                taskConfig.put(MQTTSourceConnectorConfig.MQTT_SUBTOPIC, String.valueOf(i)); // Modify this line to set the subtopic for each task
+                String topic = this.mqttSourceConnectorConfig.getString(MQTTSourceConnectorConfig.MQTT_TOPIC) + "/" + String.valueOf(i);
+                String client_id = this.mqttSourceConnectorConfig.getString(MQTTSourceConnectorConfig.CLIENTID) + "_" + String.valueOf(i);
+                taskConfig.put(MQTTSourceConnectorConfig.MQTT_TOPIC, topic); // Modify this line to set the subtopic for each task
+                taskConfig.put(MQTTSourceConnectorConfig.CLIENTID, client_id);
                 taskConfigs.add(taskConfig);
             }
         }
